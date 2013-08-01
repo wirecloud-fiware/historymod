@@ -1,0 +1,16 @@
+{
+  "name": "history-module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.1.0",
+    "cluster": "*",
+    "mysql":"2.0.0-alpha8",
+    "xmldom": "*",
+    "xpath":"*",
+    "n": "*"
+    }
+}
