@@ -1,20 +1,20 @@
 /*
- *     (C) Copyright 2013 CoNWeT Lab - Universidad Politécnica de Madrid
+ *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
- *     This file is part of Historymod.
+ *     This file is part of historymod.
  *
- *     Historymod is free software: you can redistribute it and/or modify it
+ *     historymod is free software: you can redistribute it and/or modify it
  *     under the terms of the GNU Affero General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or (at
  *     your option) any later version.
  *
- *     Historymod is distributed in the hope that it will be useful, but
+ *     historymod is distributed in the hope that it will be useful, but
  *     WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
  *     General Public License for more details.
  *
  *     You should have received a copy of the GNU Affero General Public License
- *     along with History-Module. If not, see <http://www.gnu.org/licenses/>.
+ *     along with historymod. If not, see <http://www.gnu.org/licenses/>.
  *
  *     Linking this library statically or dynamically with other modules is
  *     making a combined work based on this library.  Thus, the terms and
