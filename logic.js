@@ -35,7 +35,7 @@
  *
  */
 
-var NGSI = require('./NGSI_lib/NGSI');
+var NGSI = require('ngsijs');
 
 var isEmpty = function isEmpty(obj) {
     for(var key in obj) {

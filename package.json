@@ -6,6 +6,7 @@
         "start": "node app"
     },
     "dependencies": {
+        "ngsijs": "*",
         "express": "3.1.0",
         "cluster": "*",
         "mysql": "2.0.0-alpha8",

@@ -42,6 +42,8 @@
 // main service config
 var express = require('express');
 var mysql = require('mysql');
+var NGSI = require('ngsijs');
+var logic = require('./logic.js');
 
 // mysql DB config
 var mysqlConnection = mysql.createConnection({
@@ -53,86 +55,7 @@ var mysqlConnection = mysql.createConnection({
 mysqlConnection.connect();
 mysqlConnection.setMaxListeners(0);
 
-// NGSI config
-var xmldom = require('xmldom');
-var xpath = require('xpath');
-var http = require('http');
-var node_url = require('url');
-
-GLOBAL.DOMParser = xmldom.DOMParser;
-GLOBAL.DOMImplementation = xmldom.DOMImplementation;
-GLOBAL.XMLSerializer = xmldom.XMLSerializer;
-GLOBAL.XPathResult = xpath.XPathResult;
 GLOBAL.subscriptionId = null;
-
-var _old_createDocument = xmldom.DOMImplementation.prototype.createDocument;
-
-xmldom.DOMImplementation.prototype.createDocument = function () {
-    var doc = _old_createDocument.apply(this, arguments);
-
-	doc.evaluate = function(e, cn, r, t, res) {
-        return xpath.evaluate(e, cn, r, t, res);
-	};
-
-    return doc;
-}
-
-var NGSI = require('./NGSI_lib/NGSI');
-var logic = require('./logic');
-
-var makeRequest = function makeRequest(url, options) {
-    var parsed_url = node_url.parse(url);
-
-    if (options.requestHeaders == null || typeof options.requestHeaders !== 'object') {
-        options.requestHeaders = {};
-    }
-    options.requestHeaders['Content-Type'] = 'application/xml'
-    options.requestHeaders['Accept'] = 'application/xml'
-    options.requestHeaders['Content-Length'] = options.postBody.length;
-    
-    var request = http.request({
-            method: options.method,
-            hostname: parsed_url.hostname,
-            port: parsed_url.port,
-            path: parsed_url.path,
-            headers: options.requestHeaders,
-        }, function(response) {
-            response.setEncoding('utf8');
-            buf = '';
-            response.on('data', function (chunck) { buf += chunck; });
-            response.on('end', function () {
-                try {
-                    if ((response.statusCode >= 200 && response.statusCode < 300) && (typeof options.onSuccess === 'function')) {
-                        options.onSuccess({responseText: buf});
-                    }
-                } catch (e) {
-                    console.log("exception onSuccess!!!--> " + e.message);
-                }
-                if (typeof options.onComplete === 'function') {
-                    options.onComplete();
-                }
-            });
-        });
-
-    request.on('error', function (e) {
-        console.log(e.message);
-        try {
-            if (typeof options.onFailure === 'function') {
-                options.onFailure({});
-            }
-        } catch (e) {
-            onsole.log("exception onFailure!!!--> " + e.message);
-        }
-        if (typeof options.onComplete === 'function') {
-            options.onComplete();
-        }
-    });
-
-    if (options.postBody != null) {
-        request.write(options.postBody);
-    }
-    request.end();
-};
 
 //shut down function
 var gracefullyShuttinDown = function gracefullyShuttinDown() {
