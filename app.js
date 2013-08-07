@@ -44,14 +44,17 @@ var express = require('express');
 var mysql = require('mysql');
 var NGSI = require('ngsijs');
 var logic = require('./logic.js');
+var config = require('./historymod.config');
+var urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
 
 // mysql DB config
 var mysqlConnection = mysql.createConnection({
     host     : 'localhost',
-    user     : 'root',
-    password : 'fiw4r3',
-    database : 'historyMod',
+    user     : DB_USER,
+    password : DB_PASWORD,
+    database : DB_NAME,
 });
+
 mysqlConnection.connect();
 mysqlConnection.setMaxListeners(0);
 
@@ -80,7 +83,7 @@ var gracefullyShuttinDown = function gracefullyShuttinDown() {
 };
 
 // Context Broker
-var ngsi_server = 'http://130.206.82.140:1026/';
+var ngsi_server = NGSI_URL + ':' + NGSI_PORT +'/';
 var connection = new NGSI.Connection(ngsi_server);
 logic.setNGSIConnection(connection);
 
@@ -127,8 +130,8 @@ app.get('/regulators/between/:id/:from/:to', logic.getBetween.bind(null, mysqlCo
 app.post('/notify', logic.NotifyChanges.bind(null, mysqlConnection));
 
 // start service
-app.listen(80);
-console.log('Listening on port 80...');
+app.listen(SERVICE_PORT);
+console.log('Listening on port ' + SERVICE_PORT);
 
 
 var subscribeNGSI = function subscribeNGSI() {
@@ -162,7 +165,7 @@ var subscribeNGSI = function subscribeNGSI() {
             onFailure: function () {
                 //
             },
-            onNotify: 'http://130.206.82.141:80/notify' // will call logic.NotifyChanges
+            onNotify: urlToNotify // will call logic.NotifyChanges
         }
     );
 };
