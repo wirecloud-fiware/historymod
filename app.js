@@ -228,6 +228,34 @@ var completeHandler = function completeHandler(entityType) {
 }
 
 
-// MAIN CALLS
-subscribeNGSI();
+// Take local IP in SERVICE_URL is null
+if (SERVICE_URL == null) {
+    var http = require('http');
 
+    var myOpt = {
+        host: 'ifconfig.me',
+        port: 80,
+        path: '/ip'
+    };
+
+    http.get(myOpt, function(resp){
+        resp.on('data', function(data){
+            SERVICE_URL = 'http://' + data.toString().split("\n")[0];
+
+            // Construct the url to Notify in ngsi subscriptions
+            urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
+            console.log(urlToNotify);
+            // MAIN CALL
+            subscribeNGSI();
+        });
+    }).on("error", function(e){
+        console.log("Error getting your IP, try to set it manually editing historymod.config: " + e.message);
+        SERVICE_URL = 'http://unknown';
+    });
+} else {
+    // Construct the url to Notify in ngsi subscriptions
+    urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
+
+    // MAIN CALL
+    subscribeNGSI();
+}
