@@ -81,7 +81,7 @@ var gracefullyShuttinDown = function gracefullyShuttinDown() {
 
 // Context Broker
 var ngsi_server = 'http://130.206.82.140:1026/';
-var connection = new NGSI.Connection(ngsi_server, {requestFunction: makeRequest});
+var connection = new NGSI.Connection(ngsi_server);
 logic.setNGSIConnection(connection);
 
 process.on('SIGINT', gracefullyShuttinDown);
