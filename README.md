@@ -6,7 +6,7 @@ FI-WARE live demo.
 
 This module is implemented using Node.js and the ngsijs Javascript library.
 
-Configuration
+Configuration and installation
 -------------
 
 In the configuration file "historymod.config" should edit the configuration
@@ -27,6 +27,14 @@ e.g:
     // NGSI SERVER
     GLOBAL.NGSI_URL = 'http://130.206.82.140';
     GLOBAL.NGSI_PORT = '1026';
+
+You must also install the dependencies in the local node_modules folder:
+
+    $ npm install
+
+In global mode (ie, with -g or --global appended to the command), it installs
+the current package context as a global package.
+
 
 Data Base Configuration
 -----------------------
