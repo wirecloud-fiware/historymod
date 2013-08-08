@@ -13,6 +13,7 @@ In the configuration file "historymod.config" should edit the configuration
 fields required for the application:
 
 e.g:
+
     // mysql DB config
     GLOBAL.DB_USER = 'root';
     GLOBAL.DB_PASWORD = 'my_root_pass';
@@ -36,16 +37,16 @@ installed mysql.
 After you install mysql, you must create an empty database. For example, you
 can create a new database from mysql command line:
 
-  mysql> CREATE DATABASE database_name;
+    mysql> CREATE DATABASE database_name;
 
 Then, import database from historymod.sql file:
 
-  $ mysql -u db_user -p database_name < path_to_historymod.sql;
+    $ mysql -u db_user -p database_name < path_to_historymod.sql;
 
 Running
 -------
 
-  $ npm run start
+    $ npm run start
 
 Contact
 -------
