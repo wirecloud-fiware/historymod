@@ -27,6 +27,21 @@ e.g:
     GLOBAL.NGSI_URL = 'http://130.206.82.140';
     GLOBAL.NGSI_PORT = '1026';
 
+Data Base Configuration
+-----------------------
+
+To configure the database that stores historical information, we need to have
+installed mysql.
+
+After you install mysql, you must create an empty database. For example, you
+can create a new database from mysql command line:
+
+  mysql> CREATE DATABASE database_name;
+
+Then, import database from historymod.sql file:
+
+  $ mysql -u db_user -p database_name < path_to_historymod.sql;
+
 Running
 -------
 
