@@ -25,8 +25,7 @@ e.g:
     GLOBAL.SERVICE_PORT = '80';
 
     // NGSI SERVER
-    GLOBAL.NGSI_URL = 'http://130.206.82.140';
-    GLOBAL.NGSI_PORT = '1026';
+    GLOBAL.NGSI_URL = 'http://130.206.82.140:1026';
 
 You must also install the dependencies in the local node_modules folder:
 

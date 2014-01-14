@@ -42,10 +42,12 @@
 // main service config
 var express = require('express');
 var mysql = require('mysql');
+var url = require('url');
+
 var NGSI = require('ngsijs');
 var logic = require('./logic.js');
 var config = require('./historymod.config');
-var urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
+var urlToNotify;
 
 // mysql DB config
 var mysqlConnection = mysql.createConnection({
@@ -83,8 +85,7 @@ var gracefullyShuttinDown = function gracefullyShuttinDown() {
 };
 
 // Context Broker
-var ngsi_server = NGSI_URL + ':' + NGSI_PORT +'/';
-var connection = new NGSI.Connection(ngsi_server);
+var connection = new NGSI.Connection(NGSI_URL);
 logic.setNGSIConnection(connection);
 
 process.on('SIGINT', gracefullyShuttinDown);
@@ -227,6 +228,13 @@ var completeHandler = function completeHandler(entityType) {
     console.log('* ngsi query COMPLETED getting ' + entityType);
 }
 
+var init = function init() {
+    // build the url to use for the ngsi notifications
+    urlToNotify = url.resolve(SERVICE_URL, 'notify');
+
+    // MAIN CALL
+    subscribeNGSI();
+};
 
 // Take local IP in SERVICE_URL is null
 if (SERVICE_URL == null) {
@@ -238,24 +246,16 @@ if (SERVICE_URL == null) {
         path: '/ip'
     };
 
-    http.get(myOpt, function(resp){
-        resp.on('data', function(data){
+    http.get(myOpt, function(resp) {
+        resp.on('data', function(data) {
             SERVICE_URL = 'http://' + data.toString().split("\n")[0];
 
-            // Construct the url to Notify in ngsi subscriptions
-            urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
-            console.log(urlToNotify);
-            // MAIN CALL
-            subscribeNGSI();
+            init();
         });
     }).on("error", function(e){
         console.log("Error getting your IP, try to set it manually editing historymod.config: " + e.message);
         SERVICE_URL = 'http://unknown';
     });
 } else {
-    // Construct the url to Notify in ngsi subscriptions
-    urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
-
-    // MAIN CALL
-    subscribeNGSI();
+    init();
 }
