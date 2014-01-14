@@ -15,9 +15,9 @@ fields required for the application:
 e.g:
 
     // mysql DB config
-    GLOBAL.DB_USER = 'root';
-    GLOBAL.DB_PASWORD = 'my_root_pass';
-    GLOBAL.DB_NAME = 'database_name';
+    GLOBAL.DB_USER = 'mysql_user';
+    GLOBAL.DB_PASSWORD = 'mysql_user_pass';
+    GLOBAL.DB_NAME = 'mysql_database_name';
 
     // Service config
     //GLOBAL.SERVICE_URL = null; // Auto detect
