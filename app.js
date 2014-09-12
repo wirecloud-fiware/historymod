@@ -1,5 +1,5 @@
 /*
- *     Copyright 2013 (c) CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright 2013-2014 (c) CoNWeT Lab., Universidad Politécnica de Madrid
  *
  *     This file is part of historymod.
  *
@@ -42,16 +42,18 @@
 // main service config
 var express = require('express');
 var mysql = require('mysql');
+var url = require('url');
+
 var NGSI = require('ngsijs');
 var logic = require('./logic.js');
 var config = require('./historymod.config');
-var urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
+var urlToNotify;
 
 // mysql DB config
 var mysqlConnection = mysql.createConnection({
     host     : 'localhost',
     user     : DB_USER,
-    password : DB_PASWORD,
+    password : DB_PASSWORD,
     database : DB_NAME,
 });
 
@@ -83,22 +85,21 @@ var gracefullyShuttinDown = function gracefullyShuttinDown() {
 };
 
 // Context Broker
-var ngsi_server = NGSI_URL + ':' + NGSI_PORT +'/';
-var connection = new NGSI.Connection(ngsi_server);
+var connection = new NGSI.Connection(NGSI_URL);
 logic.setNGSIConnection(connection);
 
 process.on('SIGINT', gracefullyShuttinDown);
-process.on('SIGTERM',gracefullyShuttinDown);
+process.on('SIGTERM', gracefullyShuttinDown);
 
 
 // Server
 var app = express();
 
-app.configure(function() {
+app.configure(function () {
     app.use(express.bodyParser());
 });
 
-app.configure('development', function(){
+app.configure('development', function () {
     app.use(express.errorHandler());
 });
 
@@ -137,24 +138,25 @@ console.log('Listening on port ' + SERVICE_PORT);
 var subscribeNGSI = function subscribeNGSI() {
     console.log('Creating subscription to sensor changes...');
     console.log('A-app.listeners(): ' + app.listeners());
-    connection.createSubscription([{
+    connection.createSubscription([
+            {
                 type: 'Node',
                 isPattern: true,
-                id: 'OUTSMART\..*'
+                id: 'OUTSMART\\..*'
             }, {
                 type: 'AMMS',
                 isPattern: true,
-                id: 'OUTSMART\..*'
+                id: 'OUTSMART\\..*'
             }, {
                 type: 'Regulator',
                 isPattern: true,
-                id: 'OUTSMART\..*'
+                id: 'OUTSMART\\..*'
             }
         ],
         null,
         'P1Y',
         null,
-        [{type:'ONCHANGE', condValues: ['TimeInstant']}],
+        [{type: 'ONCHANGE', condValues: ['TimeInstant']}],
         {
             flat: true,
             onSuccess: function (data) {
@@ -174,7 +176,7 @@ var refreshNGSISubscription = function refreshNGSISubscription() {
     connection.updateSubscription(subscriptionId,
         'PT24H',
         null,
-        [{type:'ONCHANGE', condValues: ['TimeInstant']}],
+        [{type: 'ONCHANGE', condValues: ['TimeInstant']}],
         {
             onComplete: function () {
                 console.log('NGSI Subscription updated');
@@ -182,12 +184,7 @@ var refreshNGSISubscription = function refreshNGSISubscription() {
             onFailure: function () {
                 console.log('Error updating NGSI Subscription.');
             }
-    });
-};
-
-var processAMMSObs = function processAMMSObs(obsList) {
-    console.log("- Getting AMMS. Number of capture: " + namms);
-    logic.addAMMSInGroup(obsList, mysqlConnection);
+        });
 };
 
 var processRegulatorObs = function processRegulatorObs(obsList) {
@@ -197,36 +194,43 @@ var processRegulatorObs = function processRegulatorObs(obsList) {
 
 var errorHandlerAMMS = function errorHandlerAMMS() {
     errorHandler('AMMS');
-}
+};
 
 var errorHandlerLamp = function errorHandlerLamp() {
     errorHandler('Lamp');
-}
+};
 
 var errorHandlerReg = function errorHandlerReg() {
     errorHandler('Regulator');
-}
+};
 
 var errorHandler = function errorHandler(entityType) {
     console.log('*-*-*-* ERROR in ngsi query getting ' + entityType + '\n');
-}
+};
 
 var completeHandlerAMMS = function completeHandlerAMMS() {
     completeHandler('AMMS');
-}
+};
 
 var completeHandlerLamp = function completeHandlerLamp() {
     completeHandler('Lamp');
-}
+};
 
 var completeHandlerReg = function completeHandlerReg() {
     completeHandler('Regulator');
-}
+};
 
 var completeHandler = function completeHandler(entityType) {
     console.log('* ngsi query COMPLETED getting ' + entityType);
-}
+};
 
+var init = function init() {
+    // build the url to use for the ngsi notifications
+    urlToNotify = url.resolve(SERVICE_URL, 'notify');
+
+    // MAIN CALL
+    subscribeNGSI();
+};
 
 // Take local IP in SERVICE_URL is null
 if (SERVICE_URL == null) {
@@ -238,24 +242,16 @@ if (SERVICE_URL == null) {
         path: '/ip'
     };
 
-    http.get(myOpt, function(resp){
-        resp.on('data', function(data){
+    http.get(myOpt, function (resp) {
+        resp.on('data', function (data) {
             SERVICE_URL = 'http://' + data.toString().split("\n")[0];
 
-            // Construct the url to Notify in ngsi subscriptions
-            urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
-            console.log(urlToNotify);
-            // MAIN CALL
-            subscribeNGSI();
+            init();
         });
-    }).on("error", function(e){
+    }).on("error", function (e) {
         console.log("Error getting your IP, try to set it manually editing historymod.config: " + e.message);
         SERVICE_URL = 'http://unknown';
     });
 } else {
-    // Construct the url to Notify in ngsi subscriptions
-    urlToNotify = SERVICE_URL + ':' + SERVICE_PORT + '/notify';
-
-    // MAIN CALL
-    subscribeNGSI();
+    init();
 }
