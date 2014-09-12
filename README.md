@@ -2,9 +2,9 @@ historymod
 ==========
 
 This repository houses the historymod module used in the 2st release of the
-FIWARE Live Demo. This is an adhoc component created for this Demo and it
-published here as reference, but take into account that this component can
-be avoided using current FIWARE capabilities.
+FIWARE Live Demo. This is an adhoc component created for this Demo, but take
+into account that this component can be avoided using current FIWARE
+capabilities.
 
 See the main [FIWARE Live Demo repo](https://github.com/telefonicaid/fiware-livedemoapp)
 for detailed information.
