@@ -2,9 +2,10 @@ historymod
 ==========
 
 This repository houses the historymod module used in the 2st release of the
-FIWARE Live Demo. This is an adhoc component created for this Demo, but take
-into account that this component can be avoided using current FIWARE
-capabilities.
+FIWARE Live Demo. This is an adhoc component created for storing historical
+information about the lamppost sensors making possible the visualization of
+that data using the "Linear Graph" widget used in this Demo. Take into
+account that this component can be avoided using current FIWARE capabilities.
 
 See the main [FIWARE Live Demo repo](https://github.com/telefonicaid/fiware-livedemoapp)
 for detailed information.
@@ -22,8 +23,8 @@ Download it from github either by:
 
 ### Database Configuration
 
-This component need to store historical information on a database. Currently,
-historymod only supports MySQL.
+This component need to store the historical information on a database.
+Currently, historymod only supports MySQL.
 
 Once installed mysql, you must create an empty database and populate it using
 the provided historymod.sql file. e.g.:
